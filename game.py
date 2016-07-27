@@ -1,3 +1,4 @@
+import os
 import random
 
 from Tkinter import *
@@ -60,7 +61,7 @@ class Quiz(Frame):
             self.answer.config(image = photo)
             self.answer.pack()
             # state maintenance
-            self.status.config(text = 'Answer (%i)' % (self.idx+1),
+            self.status.config(text = 'Answer %i)' % (self.idx+1),
                 font=h2)
             self.fbutton.config(text = 'Next Question')
             self.last_question = None
@@ -69,7 +70,7 @@ class Quiz(Frame):
             self.idx, newq = self.qq.next()
             self.question.config(text = newq['Q'], font=p)
             # state maintenance
-            self.status.config(text = 'Question (%i)' % (self.idx+1),
+            self.status.config(text = 'Question %i) Define or state the theorem:' % (self.idx+1),
                 font=h2)
             self.fbutton.config(text = 'See Answer')
             self.answer.image = None
@@ -80,5 +81,7 @@ if __name__ == '__main__':
 
     root = Tk()
     app = Quiz(master=root, sourcefile=sf)
+    # bring python window to front
+    os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "Python" to true' ''')
     app.mainloop()
     root.destroy()

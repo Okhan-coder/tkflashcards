@@ -13,7 +13,7 @@ class Questions:
             for line in f:
                 question = {}
                 if re.match('-\s(.+):', line):
-                    ls = re.split('-\s(.+):', line, maxsplit=1)
+                    ls = re.split('-\s([^:]+):', line, maxsplit=1)
                     question['type'] = 'flash'
                     question['Q'] = ls[1]
                     question['A'] = ls[2]
@@ -22,3 +22,4 @@ class Questions:
 
 if __name__ == '__main__':
     qq = Questions('../fitzpatrick_outline.md')
+    pdb.set_trace()
