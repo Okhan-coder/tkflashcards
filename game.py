@@ -45,7 +45,7 @@ class Quiz(Frame):
 
         self.imganswer = tk.Label(master, text = '')
         self.imganswer.pack()
-        self.txtanswer = tk.Label(master, text = '')
+        self.txtanswer = tk.Label(master, text = '', wraplength = 600) # wrap in pixels
         self.txtanswer.pack()
 
         self.fbutton = tk.Button(master, text = '', command = self.next_frame)
