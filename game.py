@@ -19,6 +19,8 @@ class Quiz(Frame):
     def __init__(self, master=None, sourcefile=None):
         Frame.__init__(self, master)
         self.pack()
+
+        self.master = master
         # window settings
         master.resizable(width=False, height=False)
         master.geometry('{}x{}'.format(700, 400))
@@ -68,8 +70,13 @@ class Quiz(Frame):
             # state maintenance
             self.status.config(text = 'Answer %i)' % (self.idx+1),
                 font=h2)
-            self.fbutton.config(text = 'Next Question')
             self.last_question = None
+            # if the last question's answer was just displayed, prep for closing
+            if (self.idx + 1) == self.num_questions:
+                self.title.config(text = 'Done!')
+                self.fbutton.config(text = 'Close Quiz', command = self.master.destroy)
+            else:
+                self.fbutton.config(text = 'Next Question')
         else:
             # post new question
             self.idx, newq = self.qq.next()
@@ -102,4 +109,3 @@ if __name__ == '__main__':
     # bring python window to front
     os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "Python" to true' ''')
     app.mainloop()
-    root.destroy()
