@@ -98,8 +98,8 @@ class Quiz(Frame):
             self.last_question = newq
 
 if __name__ == '__main__':
-    sf = '../test.md'
-    # sf = '../fitzpatrick_outline.md'
+    # sf = '../test.md'
+    sf = '../fitzpatrick_outline.md'
     if len(sys.argv) == 2:
         sf = sys.argv[1]
 
