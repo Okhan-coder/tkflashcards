@@ -53,13 +53,17 @@ class Quiz(Frame):
     def next_frame(self):
         if self.last_question:
             # show answer with latex
-            ltx = self.last_question['A']
-            sympy.preview(ltx, viewer='file', filename='qtemp.jpg', euler=False)
-            image = Image.open('qtemp.jpg')
-            photo = ImageTk.PhotoImage(image)
-            self.answer.image = photo
-            self.answer.config(image = photo)
-            self.answer.pack()
+            qtxt = self.last_question['A']
+            if self.last_question['type'] == 'flash-latex':
+                sympy.preview(qtxt, viewer='file', filename='qtemp.jpg', euler=False)
+                image = Image.open('qtemp.jpg')
+                photo = ImageTk.PhotoImage(image)
+                self.answer.image = photo
+                self.answer.config(image = photo)
+                self.answer.pack()
+            else:
+                self.answer.image = None
+                self.answer.config(text = qtxt)
             # state maintenance
             self.status.config(text = 'Answer %i)' % (self.idx+1),
                 font=h2)
@@ -77,9 +81,12 @@ class Quiz(Frame):
             self.last_question = newq
 
 if __name__ == '__main__':
-    sf = '../fitzpatrick_outline.md'
+    sf = '../test.md'
+    if len(sys.argv) == 2:
+        sf = sys.argv[1]
 
     root = Tk()
+    # root = Toplevel
     app = Quiz(master=root, sourcefile=sf)
     # bring python window to front
     os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "Python" to true' ''')

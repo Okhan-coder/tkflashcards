@@ -14,12 +14,18 @@ class Questions:
                 question = {}
                 if re.match('-\s(.+):', line):
                     ls = re.split('-\s([^:]+):', line, maxsplit=1)
-                    question['type'] = 'flash'
-                    question['Q'] = ls[1]
-                    question['A'] = ls[2]
-                    questions.append(question)
+                    # skip anything with latex in the question
+                    if len(ls[1].split('$')) == 1:
+                        question['Q'] = ls[1]
+                        question['A'] = ls[2]
+                        # re.match('\$', ls[2]) not working, who knows
+                        if len(ls[2].split('$')) > 1:
+                            question['type'] = 'flash-latex'
+                        else:
+                            question['type'] = 'flash'
+                        questions.append(question)
         return questions
 
 if __name__ == '__main__':
-    qq = Questions('../fitzpatrick_outline.md')
+    qq = Questions('../test.md')
     pdb.set_trace()
