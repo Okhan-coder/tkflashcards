@@ -24,7 +24,7 @@ class Quiz(Frame):
         master.geometry('{}x{}'.format(700, 400))
         # get content
         qs = Questions(sourcefile).questions
-        random.shuffle(qs)
+        # random.shuffle(qs)
         # quiz states
         self.idx = 0
         self.last_question = None # i.e. post next question if None
@@ -41,8 +41,10 @@ class Quiz(Frame):
         self.question = tk.Label(master, text = '')
         self.question.pack()
 
-        self.answer = tk.Label(master, text = '')
-        self.answer.pack()
+        self.imganswer = tk.Label(master, text = '')
+        self.imganswer.pack()
+        self.txtanswer = tk.Label(master, text = '')
+        self.txtanswer.pack()
 
         self.fbutton = tk.Button(master, text = '', command = self.next_frame)
         self.fbutton.pack()
@@ -58,12 +60,11 @@ class Quiz(Frame):
                 sympy.preview(qtxt, viewer='file', filename='qtemp.jpg', euler=False)
                 image = Image.open('qtemp.jpg')
                 photo = ImageTk.PhotoImage(image)
-                self.answer.image = photo
-                self.answer.config(image = photo)
-                self.answer.pack()
+                self.imganswer.image = photo
+                self.imganswer.config(image = photo)
+                self.imganswer.pack()
             else:
-                self.answer.image = None
-                self.answer.config(text = qtxt)
+                self.txtanswer.config(text = qtxt)
             # state maintenance
             self.status.config(text = 'Answer %i)' % (self.idx+1),
                 font=h2)
@@ -77,11 +78,21 @@ class Quiz(Frame):
             self.status.config(text = 'Question %i) Define or state the theorem:' % (self.idx+1),
                 font=h2)
             self.fbutton.config(text = 'See Answer')
-            self.answer.image = None
+            # erase answers
+            # self.imganswer.image = None
+            image = Image.open('blank.jpg')
+            photo = ImageTk.PhotoImage(image)
+            self.imganswer.image = photo
+            self.imganswer.config(image = photo)
+            self.imganswer.pack()
+
+            self.txtanswer.config(text = '')
+
             self.last_question = newq
 
 if __name__ == '__main__':
     sf = '../test.md'
+    # sf = '../fitzpatrick_outline.md'
     if len(sys.argv) == 2:
         sf = sys.argv[1]
 
