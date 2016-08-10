@@ -26,7 +26,7 @@ class Quiz(Frame):
         master.geometry('{}x{}'.format(700, 400))
         # get content
         qs = Questions(sourcefile).questions
-        # random.shuffle(qs)
+        random.shuffle(qs)
         # quiz states
         self.idx = 0
         self.last_question = None # i.e. post next question if None
