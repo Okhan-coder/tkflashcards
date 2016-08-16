@@ -10,17 +10,21 @@ class Questions:
     def parse_file(self, filename):
         questions = []
         with open(filename, 'r') as f:
+            full_path = '/'.join(f.name.split('/')[:-1])
             for line in f:
                 question = {}
                 if re.match('-\s(.+):', line):
                     ls = re.split('-\s([^:]+):', line, maxsplit=1)
                     # skip anything with latex in the question
-                    if len(ls[1].split('$')) == 1:
+                    if not re.search('\$', ls[1]):
                         question['Q'] = ls[1]
                         question['A'] = ls[2]
-                        # re.match('\$', ls[2]) not working, who knows
-                        if len(ls[2].split('$')) > 1:
+                        if re.search('\$', ls[2]):
                             question['type'] = 'flash-latex'
+                        elif re.search('\!\[.*\]\((.+)\)', ls[2]): # md image
+                            photo_loc = re.search('!\[.*\]\((.+)\)', ls[2]).groups()[0]
+                            question['A'] = '%s/%s' % (full_path, photo_loc)
+                            question['type'] = 'image'
                         else:
                             question['type'] = 'flash'
                         questions.append(question)

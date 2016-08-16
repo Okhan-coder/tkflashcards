@@ -65,6 +65,12 @@ class Quiz(Frame):
                 self.imganswer.image = photo
                 self.imganswer.config(image = photo)
                 self.imganswer.pack()
+            elif self.last_question['type'] == 'image':
+                image = Image.open(qtxt)
+                photo = ImageTk.PhotoImage(image)
+                self.imganswer.image = photo
+                self.imganswer.config(image = photo)
+                self.imganswer.pack()
             else:
                 self.txtanswer.config(text = qtxt)
             # state maintenance
