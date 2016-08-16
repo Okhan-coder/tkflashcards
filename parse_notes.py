@@ -22,16 +22,16 @@ class Questions:
                         if re.search('\!\[.*\]\((.+)\)', ls[2]): # md image
                             photo_loc = re.search('!\[.*\]\((.+)\)', ls[2]).groups()[0]
                             question['A'] = '%s/%s' % (full_path, photo_loc)
-                            no_image_cite_q = re.sub('!\[.*\]\((.+)\)', '(figure)', line)
+                            no_image_cite_q = re.sub('!\[.*\]\((.+)\)', '(figure)', ls[2])
                             question['A+'] = no_image_cite_q
                             if re.search('\$', question['A+']):
                                 question['type'] = 'image-latex'
                             else:
                                 question['type'] = 'image-text'
                         elif re.search('\$', ls[2]):
-                            question['type'] = 'flash-latex'
+                            question['type'] = 'latex'
                         else:
-                            question['type'] = 'flash'
+                            question['type'] = 'text'
                         questions.append(question)
         return questions
 

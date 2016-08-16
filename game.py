@@ -61,13 +61,14 @@ class Quiz(Frame):
         if self.last_question:
             # show answer with latex
             qtxt = self.last_question['A']
-            if self.last_question['type'] == 'flash-latex':
+            if self.last_question['type'] == 'latex':
                 sympy.preview(qtxt, viewer='file', filename='qtemp.jpg', euler=False)
                 image = Image.open('qtemp.jpg')
                 photo = ImageTk.PhotoImage(image)
                 self.ltximganswer.image = photo
                 self.ltximganswer.config(image = photo)
                 self.ltximganswer.pack()
+            # or show answer with an image
             elif re.search('image', self.last_question['type']):
                 image = Image.open(qtxt)
                 photo = ImageTk.PhotoImage(image)
