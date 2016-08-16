@@ -19,12 +19,16 @@ class Questions:
                     if not re.search('\$', ls[1]):
                         question['Q'] = ls[1]
                         question['A'] = ls[2]
-                        if re.search('\$', ls[2]):
-                            question['type'] = 'flash-latex'
-                        elif re.search('\!\[.*\]\((.+)\)', ls[2]): # md image
+                        if re.search('\!\[.*\]\((.+)\)', ls[2]): # md image
                             photo_loc = re.search('!\[.*\]\((.+)\)', ls[2]).groups()[0]
                             question['A'] = '%s/%s' % (full_path, photo_loc)
-                            question['type'] = 'image'
+                            question['A+'] = ls[2]
+                            if re.search('\$', question['A+']):
+                                question['type'] = 'image-latex'
+                            else:
+                                question['type'] = 'image-text'
+                        elif re.search('\$', ls[2]):
+                            question['type'] = 'flash-latex'
                         else:
                             question['type'] = 'flash'
                         questions.append(question)

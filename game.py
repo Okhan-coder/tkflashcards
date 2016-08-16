@@ -1,4 +1,5 @@
 import os
+import re
 import random
 
 from Tkinter import *
@@ -26,7 +27,7 @@ class Quiz(Frame):
         master.geometry('{}x{}'.format(700, 400))
         # get content
         qs = Questions(sourcefile).questions
-        random.shuffle(qs)
+        # random.shuffle(qs)
         # quiz states
         self.idx = 0
         self.last_question = None # i.e. post next question if None
@@ -43,10 +44,12 @@ class Quiz(Frame):
         self.question = tk.Label(master, text = '')
         self.question.pack()
 
-        self.imganswer = tk.Label(master, text = '')
-        self.imganswer.pack()
         self.txtanswer = tk.Label(master, text = '', wraplength = 600) # wrap in pixels
         self.txtanswer.pack()
+        self.ltximganswer = tk.Label(master, text = '')
+        self.ltximganswer.pack()
+        self.imganswer = tk.Label(master, text = '')
+        self.imganswer.pack()
 
         self.fbutton = tk.Button(master, text = '', command = self.next_frame)
         self.fbutton.pack()
@@ -62,15 +65,26 @@ class Quiz(Frame):
                 sympy.preview(qtxt, viewer='file', filename='qtemp.jpg', euler=False)
                 image = Image.open('qtemp.jpg')
                 photo = ImageTk.PhotoImage(image)
-                self.imganswer.image = photo
-                self.imganswer.config(image = photo)
-                self.imganswer.pack()
-            elif self.last_question['type'] == 'image':
+                self.ltximganswer.image = photo
+                self.ltximganswer.config(image = photo)
+                self.ltximganswer.pack()
+            elif re.search('image', self.last_question['type']):
                 image = Image.open(qtxt)
                 photo = ImageTk.PhotoImage(image)
                 self.imganswer.image = photo
                 self.imganswer.config(image = photo)
                 self.imganswer.pack()
+                # then also display the leftover latex or txt
+                qtxt2 = self.last_question['A+']
+                if self.last_question['type'] == 'image-text':
+                    self.txtanswer.config(text = qtxt2)
+                elif self.last_question['type'] == 'image-latex':
+                    sympy.preview(qtxt2, viewer='file', filename='qtemp.jpg', euler=False)
+                    image2 = Image.open('qtemp.jpg')
+                    photo2 = ImageTk.PhotoImage(image2)
+                    self.ltximganswer.image = photo2
+                    self.ltximganswer.config(image = photo2)
+                    self.ltximganswer.pack()
             else:
                 self.txtanswer.config(text = qtxt)
             # state maintenance
@@ -92,14 +106,18 @@ class Quiz(Frame):
                 font=h2)
             self.fbutton.config(text = 'See Answer')
             # erase answers
-            # self.imganswer.image = None
+            self.txtanswer.config(text = '')
+
             image = Image.open('blank.jpg')
             photo = ImageTk.PhotoImage(image)
+            # erase latex
+            self.ltximganswer.image = photo
+            self.ltximganswer.config(image = photo)
+            self.ltximganswer.pack()
+            # erase image
             self.imganswer.image = photo
             self.imganswer.config(image = photo)
             self.imganswer.pack()
-
-            self.txtanswer.config(text = '')
 
             self.last_question = newq
 
