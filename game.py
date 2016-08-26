@@ -25,7 +25,7 @@ class Quiz(Frame):
         # window settings
         master.resizable(width=False, height=False)
         master.geometry('{}x{}'.format(700, 400))
-        # get content
+        # get all questions
         qs = Questions(sourcefile).questions
         random.shuffle(qs)
         # quiz states

@@ -2,18 +2,41 @@ import re
 
 import pdb
 
+
+class Line(object):
+    # a Line is either a heading, or not.
+    # if it is not a heading, it will have no children
+    def __init__(self, parent, txt):
+        self.parent = parent
+        self.parent.children.append(self)
+        self.line = txt
+        self.children = []
+
+    def is_heading(self):
+        return (True if len(children)>0 else False)
+
 class Questions:
     def __init__(self, filename):
         self.filename = filename
-        self.questions = self.parse_file(filename)
+        self.questions = self.extract_all_questions(filename)
 
-    def parse_file(self, filename):
+    def extract_all_questions(self, filename):
+        head = Line(None,None)
+        last_line = head
+        last_level = 0
+
         questions = []
         with open(filename, 'r') as f:
             full_path = '/'.join(f.name.split('/')[:-1])
             for line in f:
                 question = {}
-                if re.match('-\s(.+):', line):
+                if re.match('#+\s(.+):', line): # heading
+                    poundsigns = re.split('(#+).*', line)[1]
+                    level = len(poundsigns)
+                    d_level = level - last_level # positive means number to move down
+
+
+                elif re.match('-\s(.+):', line): # list item
                     ls = re.split('-\s([^:]+):', line, maxsplit=1)
                     # skip anything with latex in the question
                     if not re.search('\$', ls[1]):
