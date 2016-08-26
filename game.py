@@ -57,35 +57,31 @@ class Quiz(Frame):
 
         self.next_frame()
 
+    def update_attr_label_w_image(self, attr_label_name, image_filename):
+        tk_label = getattr(self, attr_label_name)
+        image = Image.open(image_filename)
+        photo = ImageTk.PhotoImage(image)
+
+        tk_label.image = photo
+        tk_label.config(image = photo)
+        tk_label.pack()
+
     def next_frame(self):
-        if self.last_question:
-            # show answer with latex
+        if self.last_question: # show answer
             qtxt = self.last_question['A']
             if self.last_question['type'] == 'latex':
                 sympy.preview(qtxt, viewer='file', filename='qtemp.jpg', euler=False)
-                image = Image.open('qtemp.jpg')
-                photo = ImageTk.PhotoImage(image)
-                self.ltximganswer.image = photo
-                self.ltximganswer.config(image = photo)
-                self.ltximganswer.pack()
+                self.update_attr_label_w_image('ltximganswer', 'qtemp.jpg')
             # or show answer with an image
             elif re.search('image', self.last_question['type']):
-                image = Image.open(qtxt)
-                photo = ImageTk.PhotoImage(image)
-                self.imganswer.image = photo
-                self.imganswer.config(image = photo)
-                self.imganswer.pack()
+                self.update_attr_label_w_image('imganswer', qtxt)
                 # then also display the leftover latex or txt
                 qtxt2 = self.last_question['A+']
                 if self.last_question['type'] == 'image-text':
                     self.txtanswer.config(text = qtxt2)
                 elif self.last_question['type'] == 'image-latex':
                     sympy.preview(qtxt2, viewer='file', filename='qtemp.jpg', euler=False)
-                    image2 = Image.open('qtemp.jpg')
-                    photo2 = ImageTk.PhotoImage(image2)
-                    self.ltximganswer.image = photo2
-                    self.ltximganswer.config(image = photo2)
-                    self.ltximganswer.pack()
+                    self.update_attr_label_w_image('ltximganswer', 'qtemp.jpg')
             else:
                 self.txtanswer.config(text = qtxt)
             # state maintenance
@@ -98,8 +94,7 @@ class Quiz(Frame):
                 self.fbutton.config(text = 'Close Quiz', command = self.master.destroy)
             else:
                 self.fbutton.config(text = 'Next Question')
-        else:
-            # post new question
+        else: # show new question
             self.idx, newq = self.qq.next()
             self.question.config(text = newq['Q'], font=p)
             # state maintenance
@@ -109,16 +104,9 @@ class Quiz(Frame):
             # erase answers
             self.txtanswer.config(text = '')
 
-            image = Image.open('blank.jpg')
-            photo = ImageTk.PhotoImage(image)
-            # erase latex
-            self.ltximganswer.image = photo
-            self.ltximganswer.config(image = photo)
-            self.ltximganswer.pack()
-            # erase image
-            self.imganswer.image = photo
-            self.imganswer.config(image = photo)
-            self.imganswer.pack()
+            # erase latex and image
+            self.update_attr_label_w_image('ltximganswer', 'blank.jpg')
+            self.update_attr_label_w_image('imganswer', 'blank.jpg')
 
             self.last_question = newq
 
