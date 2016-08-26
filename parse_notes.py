@@ -34,6 +34,8 @@ class Questions:
                     poundsigns = re.split('(#+).*', line)[1]
                     level = len(poundsigns)
                     d_level = level - last_level # positive means number to move down
+                    # if d_level > 1, add empty levels in between just to
+                    # keep things predictable
 
 
                 elif re.match('-\s(.+):', line): # list item
