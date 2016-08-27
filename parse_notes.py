@@ -8,22 +8,31 @@ class Line(object):
     All the lines in the markdown file are considered to be in a heirarchy
     of headings, and list items
     """
-    def __init__(self, parent, data):
+    def __init__(self, parent, data, level):
         self.parent = parent
         self.parent.children.append(self)
         self.data = data
         self.children = []
+        self.level
         return self
+
+    def level(self):
+        p = self
+        l = 0
+        while (p.level > 0):
+            p = p.parent
+            l += 1
+        return l
 
 class Questions:
     def __init__(self, filename):
         self.filename = filename
-        self.questions = self.extract_all_questions(filename)
+        self.tree_head = self.extract_question_tree(filename)
 
-    def extract_all_questions(self, filename):
-        head = Line(None, {'type': 'heading', 'heading': ''})
-        last_line = head
+    def extract_question_tree(self, filename):
         last_line_level = 0
+        head = Line(None, {'type': 'heading', 'heading': ''}, last_line_level)
+        last_line = head
 
         with open(filename, 'r') as f:
             full_path = '/'.join(f.name.split('/')[:-1])
@@ -40,7 +49,7 @@ class Questions:
                         # or great-grand-parent, or ... etc.
                         for i in range(d_level - 1): # if d_level > 1, add empty
                             #levels in between (just to keep things predictable)
-                            immediate_parent = Line(immediate_parent,None)
+                            immediate_parent = Line(immediate_parent,None, last_line_level + d_level)
                     elif (d_level < 0): # last line is deeper than current line,
                         # but they share a parent eventually
                         for i in range(abs(d_level) + 1):
@@ -52,7 +61,7 @@ class Questions:
 
                     # with a parent at hand, add the line and maintain state
                     data = {'type': 'heading', 'heading': line_wo_poundsigns}
-                    last_line = Line(immediate_parent, data)
+                    last_line = Line(immediate_parent, data, level)
                     last_line_level = level
                 elif re.match('-\s(.+):', line_txt): # list item
                     # we do not care about nested lists, we only care under which
@@ -83,11 +92,17 @@ class Questions:
                         else:
                             question_data['type'] = 'text'
                         # now add the question to the tree
-                        last_line = Line(immediate_parent, question_data)
+                        last_line = Line(immediate_parent, question_data, level)
                         last_line_level = level
                 else: # any non-heading, and non-list item line is ignored
                     pass
         return head
+
+    def iterate_tree(self, node=self.tree_head):
+        # mimick the style of the md file in returning items
+        yield node
+        for child in node.children:
+            self.iterate_tree(child)
 
 if __name__ == '__main__':
     qq = Questions('../test.md')
