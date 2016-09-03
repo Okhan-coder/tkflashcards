@@ -1,3 +1,4 @@
+import os
 import itertools
 import random
 
@@ -53,7 +54,7 @@ class TraditionalMarkdownFile(unittest.TestCase):
     #         self.failUnless(node.level() == self.level_of_each_line[i])
 
     def tearDown(self):
-        pass
+        os.remove(self.filename)
 
 def main():
     unittest.main()
