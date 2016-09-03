@@ -10,11 +10,11 @@ class Line(object):
     """
     def __init__(self, parent, data, level):
         self.parent = parent
-        self.parent.children.append(self)
+        if self.parent is not None:
+            self.parent.children.append(self)
         self.data = data
         self.children = []
         self.level
-        return self
 
     def level(self):
         p = self
@@ -98,8 +98,9 @@ class Questions:
                     pass
         return head
 
-    def iterate_tree(self, node=self.tree_head):
+    def iterate_tree(self, node=None):
         # mimick the style of the md file in returning items
+        node = node or self.tree_head
         yield node
         for child in node.children:
             self.iterate_tree(child)

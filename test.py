@@ -26,7 +26,7 @@ class TraditionalMarkdownFile(unittest.TestCase):
         random.shuffle(self.n_list_items_per_heading)
         self.level_of_each_line = []
 
-        with open(filename) as f:
+        with open(self.filename, 'w') as f:
             f.write("\n# only one h1\n\n")
             self.level_of_each_line += [1]
             i = 0
@@ -43,14 +43,14 @@ class TraditionalMarkdownFile(unittest.TestCase):
     def testHeirarchyRecordedLevel(self):
         qq = Questions(self.filename)
         i = 0
-        for node in qq.iterate_tree().next():
+        for node in qq.iterate_tree():
             self.failUnless(node.level == self.level_of_each_line[i])
 
-    def testHeirarchyLevel(self):
-        qq = Questions(self.filename)
-        i = 0
-        for node in qq.iterate_tree().next():
-            self.failUnless(node.level() == self.level_of_each_line[i])
+    # def testHeirarchyLevel(self):
+    #     qq = Questions(self.filename)
+    #     i = 0
+    #     for node in qq.iterate_tree():
+    #         self.failUnless(node.level() == self.level_of_each_line[i])
 
     def tearDown(self):
         pass
