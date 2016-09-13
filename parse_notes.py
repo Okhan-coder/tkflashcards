@@ -60,17 +60,6 @@ class Questions:
         os.system(cmd2)
         return 1
 
-    # for cmd2: http://www.imagemagick.org/Usage/annotating/
-    # def export_flashcard_text_w_image(self, text, imgfile, filename):
-    #     # just pad it
-    #     cmd = 'convert %s -gravity center -background white -extent 667x375 %s' % (imgfile, filename)
-    #     os.system(cmd)
-    #     # add text
-    #     # cmd = 'convert %s  -fill white  -undercolor "#00000080"  -gravity South -annotate +0+5 " %s " %s' % (filename, text, filename)
-    #     cmd2 = 'convert -background "#0008" -fill white -gravity center -pointsize 25 -size 667x caption:"%s" %s +swap -gravity north -composite  %s' % (text, filename, filename)
-    #     os.system(cmd2)
-    #     return 1
-
     def export_flashcards(self, outpdf):
         qs = self.questions
         # random.shuffle(qs)
@@ -98,7 +87,6 @@ class Questions:
                     print 'bad question answer:\n%s\n%s' % (q['Q'], q['A'])
         os.system('rm %s' % tmpfile)
         # combine into pdf
-        # pdf_cmd = "ls %s/*.png | sort -n | tr '\n' ' ' | sed 's/$/\ %s/' | xargs convert" % (dr, outpdf)
         pdf_cmd = 'convert %s/*.png %s' % (dr, outpdf)
         os.system(pdf_cmd)
 
