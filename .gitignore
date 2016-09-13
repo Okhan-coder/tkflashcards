@@ -2,3 +2,6 @@
 *.pyc
 *~.py
 *temp.jpg
+*.pdf
+
+flash_export_tmp/*
