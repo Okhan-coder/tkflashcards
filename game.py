@@ -70,8 +70,11 @@ class Quiz(Frame):
         if self.last_question: # show answer
             qtxt = self.last_question['A']
             if self.last_question['type'] == 'latex':
-                sympy.preview(qtxt, viewer='file', filename='qtemp.jpg', euler=False)
-                self.update_attr_label_w_image('ltximganswer', 'qtemp.jpg')
+                try:
+                    sympy.preview(qtxt, viewer='file', filename='qtemp.jpg', euler=False)
+                    self.update_attr_label_w_image('ltximganswer', 'qtemp.jpg')
+                except:
+                    self.txtanswer.config(text = 'FAILED TO RENDER LATEX FOR: %s' % qtxt)
             # or show answer with an image
             elif re.search('image', self.last_question['type']):
                 self.update_attr_label_w_image('imganswer', qtxt)
