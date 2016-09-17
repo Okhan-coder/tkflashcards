@@ -26,7 +26,8 @@ class Quiz(Frame):
         master.resizable(width=False, height=False)
         master.geometry('{}x{}'.format(700, 400))
         # get content
-        qs = Questions(sourcefile).questions
+        self.qinstance = Questions(sourcefile)
+        qs = self.qinstance.questions
         random.shuffle(qs)
         # quiz states
         self.idx = 0
@@ -70,11 +71,8 @@ class Quiz(Frame):
         if self.last_question: # show answer
             qtxt = self.last_question['A']
             if self.last_question['type'] == 'latex':
-                try:
-                    sympy.preview(qtxt, viewer='file', filename='qtemp.jpg', euler=False)
-                    self.update_attr_label_w_image('ltximganswer', 'qtemp.jpg')
-                except:
-                    self.txtanswer.config(text = 'FAILED TO RENDER LATEX FOR: %s' % qtxt)
+                latex_img = self.qinstance.latex_to_image(qtxt, 'qtemp.jpg')
+                self.update_attr_label_w_image('ltximganswer', latex_img)
             # or show answer with an image
             elif re.search('image', self.last_question['type']):
                 self.update_attr_label_w_image('imganswer', qtxt)
@@ -83,8 +81,8 @@ class Quiz(Frame):
                 if self.last_question['type'] == 'image-text':
                     self.txtanswer.config(text = qtxt2)
                 elif self.last_question['type'] == 'image-latex':
-                    sympy.preview(qtxt2, viewer='file', filename='qtemp.jpg', euler=False)
-                    self.update_attr_label_w_image('ltximganswer', 'qtemp.jpg')
+                    latex_img = self.qinstance.latex_to_image(qtxt2, viewer='file')
+                    self.update_attr_label_w_image('ltximganswer', latex_img)
             else:
                 self.txtanswer.config(text = qtxt)
             # state maintenance

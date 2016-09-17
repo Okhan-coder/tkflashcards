@@ -63,7 +63,6 @@ class Questions:
     def export_flashcards(self, outpdf):
         qs = self.questions
         # random.shuffle(qs)
-
         os.system('rm flash_export_tmp/*.png')
 
         dr = 'flash_export_tmp/'
@@ -77,19 +76,27 @@ class Questions:
                 self.export_flashcard_text(q['A'], "%s%03i.png" % (dr, i))
                 i += self.add_text_to_image(q['Q'], "%s%03i.png" % (dr, i))
             elif q['type'] == 'latex':
-                try:
-                    sympy.preview(q['A'], viewer='file', filename=tmpfile, euler=False)
+                latex_image = self.latex_to_image(q['A'], tmpfile)
+                if latex_image == tmpfile:
                     i += self.export_flashcard_text(q['Q'], "%s%03i.png" % (dr, i))
 
                     self.export_flashcard_image(tmpfile, "%s%03i.png" % (dr, i))
                     i += self.add_text_to_image(q['Q'], "%s%03i.png" % (dr, i))
-                except:
-                    print 'bad question answer:\n%s\n%s' % (q['Q'], q['A'])
-        os.system('rm %s' % tmpfile)
-        # combine into pdf
-        pdf_cmd = 'convert %s/*.png %s' % (dr, outpdf)
-        os.system(pdf_cmd)
+        if i > 0:
+            os.system('rm %s' % tmpfile)
+            # combine into pdf
+            pdf_cmd = 'convert %s/*.png %s' % (dr, outpdf)
+            os.system(pdf_cmd)
+        else:
+            print '---\nNo flash cards created'
 
+    def latex_to_image(self, text, filename='qtemp.jpg'):
+        try:
+            sympy.preview(text, viewer='file', filename=filename, euler=False)
+            return filename
+        except Exception,e:
+            print e
+            return 'latex_error.jpg'
 
 if __name__ == '__main__':
     if len(sys.argv) == 1:
@@ -99,4 +106,6 @@ if __name__ == '__main__':
         outfile = sys.argv[2]
         qq = Questions(infile)
         qq.export_flashcards(outfile)
+    else:
+        print 'Nothing to do with %i input arguments' % len(sys.argv)
     # pdb.set_trace()
