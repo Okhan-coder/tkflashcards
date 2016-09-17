@@ -17,7 +17,7 @@ h2 = ('Helvetica', 18)
 p = ('Times', 16)
 
 class Quiz(Frame):
-    def __init__(self, master=None, sourcefile=None):
+    def __init__(self, master=None, sourcefile=None, latexheaderfile=None):
         Frame.__init__(self, master)
         self.pack()
 
@@ -26,7 +26,7 @@ class Quiz(Frame):
         master.resizable(width=False, height=False)
         master.geometry('{}x{}'.format(700, 400))
         # get content
-        self.qinstance = Questions(sourcefile)
+        self.qinstance = Questions(sourcefile, latexheaderfile)
         qs = self.qinstance.questions
         random.shuffle(qs)
         # quiz states
@@ -75,13 +75,13 @@ class Quiz(Frame):
                 self.update_attr_label_w_image('ltximganswer', latex_img)
             # or show answer with an image
             elif re.search('image', self.last_question['type']):
-                self.update_attr_label_w_image('imganswer', qtxt)
+                imgloc = self.last_question['A+']
+                self.update_attr_label_w_image('imganswer', imgloc)
                 # then also display the leftover latex or txt
-                qtxt2 = self.last_question['A+']
                 if self.last_question['type'] == 'image-text':
-                    self.txtanswer.config(text = qtxt2)
+                    self.txtanswer.config(text = qtxt)
                 elif self.last_question['type'] == 'image-latex':
-                    latex_img = self.qinstance.latex_to_image(qtxt2, viewer='file')
+                    latex_img = self.qinstance.latex_to_image(qtxt)
                     self.update_attr_label_w_image('ltximganswer', latex_img)
             else:
                 self.txtanswer.config(text = qtxt)
@@ -112,14 +112,17 @@ class Quiz(Frame):
             self.last_question = newq
 
 if __name__ == '__main__':
-    # sf = '../test.md'
-    sf = '../fitzpatrick_outline.md'
-    if len(sys.argv) == 2:
-        sf = sys.argv[1]
-
+    sf = '../test.md'
     root = Tk()
     # root = Toplevel
-    app = Quiz(master=root, sourcefile=sf)
+    if len(sys.argv) == 3:
+        sf = sys.argv[1]
+        lhf = sys.argv[2]
+        app = Quiz(master=root, sourcefile=sf, latexheaderfile=lhf)
+    elif len(sys.argv) == 2:
+        sf = sys.argv[1]
+        app = Quiz(master=root, sourcefile=sf)
+
     # bring python window to front
     os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "Python" to true' ''')
     app.mainloop()

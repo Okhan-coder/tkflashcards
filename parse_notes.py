@@ -8,11 +8,15 @@ import sympy
 import pdb
 
 class Questions:
-    def __init__(self, filename):
+    def __init__(self, filename, latexheaderfile=None):
         self.filename = filename
-        self.questions = self.parse_file(filename)
+        self.questions = self.parse_file(filename, latexheaderfile)
 
-    def parse_file(self, filename):
+    def parse_file(self, filename, latex_headers=None):
+        if latex_headers:
+            with open(latex_headers, 'rU') as lh:
+                lines = lh.readlines()
+                latex_headers = (''.join(lines)).replace('\n','')
         questions = []
         with open(filename, 'r') as f:
             full_path = '/'.join(f.name.split('/')[:-1])
@@ -26,10 +30,11 @@ class Questions:
                         question['A'] = ls[2]
                         if re.search('\!\[.*\]\((.+)\)', ls[2]): # md image
                             photo_loc = re.search('!\[.*\]\((.+)\)', ls[2]).groups()[0]
-                            question['A'] = '%s/%s' % (full_path, photo_loc)
+                            question['A+'] = '%s/%s' % (full_path, photo_loc)
                             no_image_cite_q = re.sub('!\[.*\]\((.+)\)', '(figure)', ls[2])
-                            question['A+'] = no_image_cite_q
-                            if re.search('\$', question['A+']):
+                            question['A'] = no_image_cite_q
+                            # note the image goes in A+ and the other text in A
+                            if re.search('\$', question['A']):
                                 question['type'] = 'image-latex'
                             else:
                                 question['type'] = 'image-text'
@@ -37,6 +42,9 @@ class Questions:
                             question['type'] = 'latex'
                         else:
                             question['type'] = 'text'
+                        # insert headers
+                        if re.search('latex', question['type']):
+                            question['A'] = '%s %s' % (latex_headers, question['A'])
                         questions.append(question)
         return questions
 
@@ -63,7 +71,7 @@ class Questions:
     def export_flashcards(self, outpdf):
         qs = self.questions
         # random.shuffle(qs)
-        os.system('rm flash_export_tmp/*.png')
+        os.system('rm -f flash_export_tmp/*.png')
 
         dr = 'flash_export_tmp/'
         i = 0;
@@ -87,21 +95,28 @@ class Questions:
             # combine into pdf
             pdf_cmd = 'convert %s/*.png %s' % (dr, outpdf)
             os.system(pdf_cmd)
-        else:
-            print '---\nNo flash cards created'
+        print '---\n%i flash cards created' % i
 
     def latex_to_image(self, text, filename='qtemp.jpg'):
         try:
             sympy.preview(text, viewer='file', filename=filename, euler=False)
             return filename
         except Exception,e:
+            print '--- Failed to render latex for ---\n%s\n---\n' % text
             print e
             return 'latex_error.jpg'
 
 if __name__ == '__main__':
-    if len(sys.argv) == 1:
+    if len(sys.argv) == 4:
+        infile = sys.argv[1]
+        headerfile = sys.argv[2]
+        outfile = sys.argv[3]
+        qq = Questions(infile, headerfile)
+        qq.export_flashcards(outfile)
+    elif len(sys.argv) == 1:
         qq = Questions('../test.md')
     elif len(sys.argv) == 3:
+        print 'No latex headers given... Creating flash cards'
         infile = sys.argv[1]
         outfile = sys.argv[2]
         qq = Questions(infile)
