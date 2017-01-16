@@ -43,7 +43,7 @@ class Questions:
                         else:
                             question['type'] = 'text'
                         # insert headers
-                        if re.search('latex', question['type']):
+                        if latex_headers and re.search('latex', question['type']):
                             question['A'] = '%s %s' % (latex_headers, question['A'])
                         questions.append(question)
         return questions
