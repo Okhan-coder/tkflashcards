@@ -9,6 +9,7 @@ import sympy
 from PIL import Image, ImageTk
 
 from parse_notes import Questions
+import args
 
 import pdb
 
@@ -17,7 +18,7 @@ h2 = ('Helvetica', 18)
 p = ('Times', 16)
 
 class Quiz(Frame):
-    def __init__(self, master=None, sourcefile=None, latexheaderfile=None):
+    def __init__(self, master=None, sourcefile=None, latexheaderfile=None, shuffle=None):
         Frame.__init__(self, master)
         self.pack()
 
@@ -28,7 +29,8 @@ class Quiz(Frame):
         # get content
         self.qinstance = Questions(sourcefile, latexheaderfile)
         qs = self.qinstance.questions
-        random.shuffle(qs)
+        if shuffle:
+            random.shuffle(qs)
         # quiz states
         self.idx = 0
         self.last_question = None # i.e. post next question if None
@@ -114,14 +116,9 @@ class Quiz(Frame):
 if __name__ == '__main__':
     sf = '../test.md'
     root = Tk()
-    # root = Toplevel
-    if len(sys.argv) == 3:
-        sf = sys.argv[1]
-        lhf = sys.argv[2]
-        app = Quiz(master=root, sourcefile=sf, latexheaderfile=lhf)
-    elif len(sys.argv) == 2:
-        sf = sys.argv[1]
-        app = Quiz(master=root, sourcefile=sf)
+
+    _ = args.get()
+    app = Quiz(master=root, sourcefile=_.sourcefile, latexheaderfile=_.latex_header_file, shuffle=_.shuffle)
 
     # bring python window to front
     os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "Python" to true' ''')
