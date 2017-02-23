@@ -7,7 +7,8 @@ def get():
     parser.add_argument("-f",
                         "--sourcefile",
                         type=str,
-                        default='../test.md')
+                        default=None,
+                        help='If None then uses the clipboard')
     parser.add_argument("-l",
                         "--latex-header-file",
                         type=str,

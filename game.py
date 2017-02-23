@@ -11,6 +11,9 @@ from PIL import Image, ImageTk
 from parse_notes import Questions
 import args
 
+import tempfile
+import clipboard
+
 import pdb
 
 h1 = ('Helvetica', 24)
@@ -18,7 +21,7 @@ h2 = ('Helvetica', 18)
 p = ('Times', 16)
 
 class Quiz(Frame):
-    def __init__(self, master=None, sourcefile=None, latexheaderfile=None, shuffle=None):
+    def __init__(self, master=None, sourcefp=None, latexheaderfile=None, shuffle=None):
         Frame.__init__(self, master)
         self.pack()
 
@@ -27,7 +30,7 @@ class Quiz(Frame):
         master.resizable(width=False, height=False)
         master.geometry('{}x{}'.format(700, 400))
         # get content
-        self.qinstance = Questions(sourcefile, latexheaderfile)
+        self.qinstance = Questions(sourcefp, latexheaderfile)
         qs = self.qinstance.questions
         if shuffle:
             random.shuffle(qs)
@@ -118,7 +121,13 @@ if __name__ == '__main__':
     root = Tk()
 
     _ = args.get()
-    app = Quiz(master=root, sourcefile=_.sourcefile, latexheaderfile=_.latex_header_file, shuffle=_.shuffle)
+    if not _.sourcefile:
+        fp = tempfile.TemporaryFile()
+        fp.write(clipboard.paste())
+        fp.seek(0)
+    else:
+        fp = open(_.sourcefile)
+    app = Quiz(master=root, sourcefp=fp, latexheaderfile=_.latex_header_file, shuffle=_.shuffle)
 
     # bring python window to front
     os.system('''/usr/bin/osascript -e 'tell app "Finder" to set frontmost of process "Python" to true' ''')
