@@ -123,7 +123,7 @@ if __name__ == '__main__':
     _ = args.get()
     if not _.sourcefile:
         fp = tempfile.TemporaryFile()
-        fp.write(clipboard.paste())
+        fp.write(clipboard.paste().encode('utf-8'))
         fp.seek(0)
     else:
         fp = open(_.sourcefile)
