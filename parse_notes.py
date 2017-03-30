@@ -21,7 +21,7 @@ class Questions:
         full_path = '/'.join(f.name.split('/')[:-1])
         for line in f:
             question = {}
-            if re.match('-\s(.+):', line):
+            if re.search('-\s(.+):', line):
                 ls = re.split('-\s([^:]+):', line, maxsplit=1)
                 # skip anything with latex in the question
                 if not re.search('\$', ls[1]):
