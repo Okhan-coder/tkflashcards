@@ -110,15 +110,15 @@ if __name__ == '__main__':
         infile = sys.argv[1]
         headerfile = sys.argv[2]
         outfile = sys.argv[3]
-        qq = Questions(infile, headerfile)
+        fp = open(infile)
+        qq = Questions(fp, headerfile)
         qq.export_flashcards(outfile)
-    elif len(sys.argv) == 1:
-        qq = Questions('../test.md')
     elif len(sys.argv) == 3:
         print 'No latex headers given... Creating flash cards'
         infile = sys.argv[1]
         outfile = sys.argv[2]
-        qq = Questions(infile)
+        fp = open(infile)
+        qq = Questions(fp)
         qq.export_flashcards(outfile)
     else:
         print 'Nothing to do with %i input arguments' % len(sys.argv)
