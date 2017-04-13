@@ -28,7 +28,7 @@ class Quiz(Frame):
         self.master = master
         # window settings
         master.resizable(width=False, height=False)
-        master.geometry('{}x{}'.format(700, 400))
+        master.geometry('{}x{}'.format(800, 600))
         # get content
         self.qinstance = Questions(sourcefp, latexheaderfile)
         qs = self.qinstance.questions
